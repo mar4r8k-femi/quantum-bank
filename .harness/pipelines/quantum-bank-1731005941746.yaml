@@ -19,41 +19,61 @@ pipeline:
           cloneCodebase: true
           execution:
             steps:
+              - parallel:
+                  - step:
+                      type: Owasp
+                      name: Owasp_1
+                      identifier: Owasp_1
+                      spec:
+                        target:
+                          detection: auto
+                          type: repository
+                        advanced:
+                          log:
+                            level: info
+                          args: {}
+                        mode: orchestration
+                        config: default
+                  - step:
+                      type: OsvScanner
+                      name: OsvScanner_1
+                      identifier: OsvScanner_1
+                      spec:
+                        target:
+                          detection: auto
+                          type: repository
+                        advanced:
+                          log:
+                            level: info
+                          args: {}
+                        mode: orchestration
+                        config: default
               - step:
-                  identifier: runlinter
-                  name: run linter
+                  type: RunTests
+                  name: RunTests_1
+                  identifier: RunTests_1
                   spec:
-                    command: |-
-                      pip install flake8
-                      flake8 .
-                  timeout: ""
-                  type: Run
+                    language: Python
+                    buildTool: Pytest
+                    args: ./test/*.py --junitxml=out_report.xml
+                    runOnlySelectedTests: true
+                    preCommand: pip install -r requirements.txt
+                    enableTestSplitting: false
               - step:
-                  identifier: setupvirtualenvironment
-                  name: setup virtual environment
-                  spec:
-                    command: |-
-                      python3 -m venv .venv
-                      . .venv/bin/activate
-                      python3 -m pip install -r requirements.txt
-                      python3 -m pip install -e .
-                  timeout: ""
-                  type: Run
-              - step:
-                  identifier: dockerbuild
-                  name: docker_build
-                  spec:
-                    caching: true
-                    connectorRef: <+input>
-                    repo: hello/world
-                    tags:
-                      - latest
-                  timeout: ""
                   type: BuildAndPushDockerRegistry
+                  name: BuildAndPushDockerRegistry_1
+                  identifier: BuildAndPushDockerRegistry_1
+                  spec:
+                    connectorRef: femidockerhub
+                    repo: mar4r8kfemi/quantum-bank-backend
+                    tags:
+                      - <+pipeline.sequenceId>
+                    caching: true
+                    dockerfile: ./Dockerfile
           platform:
-            arch: Amd64
             os: Linux
+            arch: Amd64
           runtime:
-            spec: {}
             type: Cloud
+            spec: {}
         type: CI
