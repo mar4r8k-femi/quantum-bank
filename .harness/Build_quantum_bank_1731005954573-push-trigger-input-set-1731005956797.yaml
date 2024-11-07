@@ -1,0 +1,14 @@
+inputSet:
+  name: Build_quantum_bank_1731005954573-push-trigger-input-set
+  identifier: Build_quantum_bank_1731005954573pushtriggerinputset
+  orgIdentifier: sandbox
+  projectIdentifier: Femi_Sandbox
+  pipeline:
+    identifier: Build_quantum_bank_1731005954573
+    properties:
+      ci:
+        codebase:
+          build:
+            type: branch
+            spec:
+              branch: <+trigger.branch>
