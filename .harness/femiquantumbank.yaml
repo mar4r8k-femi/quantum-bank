@@ -77,3 +77,29 @@ pipeline:
                       - latest
                     caching: true
                     dockerfile: ./Dockerfile
+    - stage:
+        name: Approval
+        identifier: Approval
+        description: ""
+        type: Approval
+        spec:
+          execution:
+            steps:
+              - step:
+                  name: Approval
+                  identifier: Approval
+                  type: HarnessApproval
+                  timeout: 1h
+                  spec:
+                    approvalMessage: |-
+                      Please review the following information
+                      and approve the pipeline progression
+                    includePipelineExecutionHistory: true
+                    approvers:
+                      minimumCount: 1
+                      disallowPipelineExecutor: false
+                      userGroups:
+                        - account._organization_all_users
+                    isAutoRejectEnabled: false
+                    approverInputs: []
+        tags: {}
