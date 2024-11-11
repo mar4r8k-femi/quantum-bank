@@ -72,7 +72,7 @@ pipeline:
                   identifier: Build_And_Push_Docker_Registry
                   spec:
                     connectorRef: femidockerhub
-                    repo: quantum-bank-backend
+                    repo: mar4r8kfemi/quantum-bank-backend
                     tags:
                       - latest
                     caching: true
