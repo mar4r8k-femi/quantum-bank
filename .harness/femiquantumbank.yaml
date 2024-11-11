@@ -1,0 +1,79 @@
+pipeline:
+  name: femi-quantum-bank
+  identifier: femiquantumbank
+  projectIdentifier: Femi_Sandbox
+  orgIdentifier: sandbox
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: femigithub
+        repoName: quantum-bank
+        build: <+input>
+  stages:
+    - stage:
+        name: Build
+        identifier: Build
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - parallel:
+                  - step:
+                      type: Owasp
+                      name: Owasp
+                      identifier: Owasp
+                      spec:
+                        mode: orchestration
+                        config: default
+                        target:
+                          type: repository
+                          detection: auto
+                        advanced:
+                          log:
+                            level: info
+                  - step:
+                      type: OsvScanner
+                      name: Osv Scanner
+                      identifier: Osv_Scanner
+                      spec:
+                        mode: orchestration
+                        config: default
+                        target:
+                          type: repository
+                          detection: auto
+                        advanced:
+                          log:
+                            level: info
+              - step:
+                  type: RunTests
+                  name: Run Tests
+                  identifier: Run_Tests
+                  spec:
+                    language: Python
+                    buildTool: Pytest
+                    args: ./test/*.py --junitxml=out_report.xml
+                    runOnlySelectedTests: true
+                    preCommand: pip install -r requirements.txt
+                    enableTestSplitting: false
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: Build And Push Docker Registry
+                  identifier: Build_And_Push_Docker_Registry
+                  spec:
+                    connectorRef: femidockerhub
+                    repo: quantum-bank-backend
+                    tags:
+                      - pipeline.sequenceId
+                    caching: true
+                    dockerfile: ./Dockerfile
