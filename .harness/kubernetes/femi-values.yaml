@@ -1,0 +1,1 @@
+image: femi/quantum-bank-backend:<+pipeline.sequenceId>

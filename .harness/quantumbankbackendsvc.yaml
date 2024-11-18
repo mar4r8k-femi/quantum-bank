@@ -1,0 +1,26 @@
+service:
+  name: quantum-bank-backend-svc
+  identifier: quantumbankbackendsvc
+  orgIdentifier: sandbox
+  projectIdentifier: Femi_Sandbox
+  serviceDefinition:
+    spec:
+      manifests:
+        - manifest:
+            identifier: quantumbankk8s
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: quantumbank
+                  gitFetchType: Branch
+                  paths:
+                    - .harness/kubernetes/femi-quantum-bank-backend-deployment.yaml
+                    - .harness/kubernetes/femi-quantum-bank-backend-service.yaml
+                  branch: main
+              valuesPaths:
+                - .harness/kubernetes/femi-values.yaml
+              skipResourceVersioning: false
+              enableDeclarativeRollback: false
+    type: Kubernetes
