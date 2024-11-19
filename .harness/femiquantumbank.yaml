@@ -20,6 +20,7 @@ pipeline:
           cloneCodebase: true
           caching:
             enabled: true
+            paths: []
           platform:
             os: Linux
             arch: Amd64
@@ -77,6 +78,8 @@ pipeline:
                       - latest
                     caching: true
                     dockerfile: ./Dockerfile
+          buildIntelligence:
+            enabled: true
     - stage:
         name: Approval
         identifier: Approval
